@@ -1,0 +1,72 @@
+
+function (int contact_id){
+info contact_id;
+
+cc_info = zoho.crm.getRecordById("Contacts",contact_id);
+acc_info = cc_info.get("Account_Name");
+acc_id = acc_info.get("id");
+
+acc_full_info  =  zoho.crm.getRecordById("Accounts",acc_id);
+
+Account_Site = ifnull( acc_full_info.get('Account_Site'),"");
+Phone = ifnull(acc_full_info.get('Phone'),"");
+Rating = ifnull(acc_full_info.get('Rating'),"");
+updateinfolist = {
+	"Email":Account_Site,
+	"Phone":Phone,
+	"Title":Rating
+};
+
+update_statement =  zoho.crm.updateRecord("Contacts", contact_id,updateinfolist);
+info update_statement;
+}
+
+
+
+function (int contact_id){
+
+	//info contact_id;
+	cc_info = zoho.crm.getRecordById("Contacts",contact_id);
+	acc_info = cc_info.get("Account_Name");
+	acc_id = acc_info.get("id");
+	acc_full_info = zoho.crm.getRecordById("Accounts",acc_id);
+	Account_Site = ifnull(acc_full_info.get('Account_Site'),"");
+	Other_State = ifnull(acc_full_info.get('Billing_State'),"");
+	Other_City = ifnull(acc_full_info.get('Billing_City'),"");
+	Other_Street = ifnull(acc_full_info.get('Billing_Street'),"");
+	Other_Zip = ifnull(acc_full_info.get('Billing_Code'),"");
+	Other_Country = ifnull(acc_full_info.get('Billing_Country'),"");
+	updateinfolist = {"Mailing_State":Other_State,"Mailing_City":Other_City,"Mailing_Street":Other_Street,"Mailing_Zip":Other_Zip,"Mailing_Country":Other_Country};
+	update_statement = zoho.crm.updateRecord("Contacts",contact_id,updateinfolist);
+	info update_statement;
+
+
+}
+
+
+
+
+function (int account_id){
+
+related_data = zoho.crm.getRelatedRecords("Contacts","Accounts",account_id);
+
+
+acc_full_info = zoho.crm.getRecordById("Accounts",account_id);
+
+Other_State = ifnull(acc_full_info.get('Billing_State'),"");
+Other_City = ifnull(acc_full_info.get('Billing_City'),"");
+Other_Street = ifnull(acc_full_info.get('Billing_Street'),"");
+Other_Zip = ifnull(acc_full_info.get('Billing_Code'),"");
+Other_Country = ifnull(acc_full_info.get('Billing_Country'),"");
+
+
+foreach response in related_data
+ {
+	 contact_id = response.get('id');
+	updateinfolist = {"Mailing_State":Other_State,"Mailing_City":Other_City,"Mailing_Street":Other_Street,"Mailing_Zip":Other_Zip,"Mailing_Country":Other_Country};
+	 update_statement = zoho.crm.updateRecord("Contacts",contact_id,updateinfolist);
+	
+ }
+
+info update_statement;
+}
